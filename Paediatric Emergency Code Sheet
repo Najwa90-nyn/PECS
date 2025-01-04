@@ -1,0 +1,59 @@
+function calculate() {
+    const weightInput = document.getElementById('weight');
+    const ageInput = document.getElementById('age');
+    const weight = parseFloat(weightInput.value);
+    const age = parseFloat(ageInput.value);
+
+    if (isNaN(weight) || weight <= 0 || isNaN(age) || age <= 0) {
+        return; // Don't calculate if inputs are invalid
+    }
+
+    // Parameters for medication
+    const parameters = [
+        { name: "Adrenaline", min: 0.01, max: 0.03, unit: "mg/kg" },
+        { name: "Amiodarone", min: 5, max: 5, unit: "mg/kg" },
+        { name: "Atropine", min: 0.02, max: 0.05, unit: "mg/kg" },
+        { name: "Ketamine", min: 1, max: 2, unit: "mg/kg" },
+        { name: "Adenosine", min: 0.1, max: 0.2, unit: "mg/kg" },
+        { name: "Rocuronium", min: 0.6, max: 1.2, unit: "mg/kg" },
+        { name: "Pancuronium", min: 0.1, max: 0.1, unit: "mg/kg" },
+        { name: "Midazolam", min: 0.05, max: 0.1, unit: "mg/kg" },
+        { name: "NaHCO3", min: 1, max: 2, unit: "mEq/kg" },
+        { name: "Calcium Gluconate", min: 60, max: 100, unit: "mg/kg" },
+    ];
+
+    // Calculate medication doses
+    let medicationTable = "";
+    parameters.forEach(param => {
+        const minDose = (param.min * weight).toFixed(2);
+        const maxDose = (param.max * weight).toFixed(2);
+        medicationTable += `<tr><td>${param.name}</td><td>${param.min}</td><td>${param.max}</td><td>${minDose} - ${maxDose} ${param.unit}</td></tr>`;
+    });
+    document.getElementById('medicationTableBody').innerHTML = medicationTable;
+
+    // Airway parameters calculation
+    const ettCuffed = (weight / 4 + 3.5).toFixed(1);
+    const ettUncuffed = (weight / 4 + 4).toFixed(1);
+    const lengthAtLip = (weight / 2 + 12).toFixed(1);
+
+    document.getElementById('airwayParameters').innerHTML = `
+        <tr><td>ETT Size (Cuffed)</td><td>${ettCuffed}</td></tr>
+        <tr><td>ETT Size (Uncuffed)</td><td>${ettUncuffed}</td></tr>
+        <tr><td>Length at Lip Level</td><td>${lengthAtLip} cm</td></tr>
+    `;
+
+    // Cardioversion and defibrillation parameters calculation
+    const cardioMin = (0.5 * weight).toFixed(2);
+    const cardioMax = (1 * weight).toFixed(2);
+    const defibMin = (2 * weight).toFixed(2);
+    const defibMax = (4 * weight).toFixed(2);
+
+    document.getElementById('shockParameters').innerHTML = `
+        <tr><td>Cardioversion</td><td>${cardioMin} J</td><td>${cardioMax} J</td></tr>
+        <tr><td>Defibrillation</td><td>${defibMin} J</td><td>${defibMax} J</td></tr>
+    `;
+}
+
+// Event listeners for automatic calculation
+document.getElementById('weight').addEventListener('input', calculate);
+document.getElementById('age').addEventListener('input', calculate);
